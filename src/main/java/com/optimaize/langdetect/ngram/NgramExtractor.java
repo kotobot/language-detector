@@ -16,7 +16,6 @@
 
 package com.optimaize.langdetect.ngram;
 
-import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +38,7 @@ public class NgramExtractor {
     private final Character textPadding;
 
     public static NgramExtractor gramLength(int gramLength) {
-        return new NgramExtractor(ImmutableList.of(gramLength), null, null);
+        return new NgramExtractor(Collections.unmodifiableList(Arrays.asList(gramLength)), null, null);
     }
     public static NgramExtractor gramLengths(Integer... gramLength) {
         return new NgramExtractor(Arrays.asList(gramLength), null, null);
@@ -65,7 +64,7 @@ public class NgramExtractor {
 
     private NgramExtractor(@NotNull List<Integer> gramLengths, @Nullable NgramFilter filter, @Nullable Character textPadding) {
         if (gramLengths.isEmpty()) throw new IllegalArgumentException();
-        this.gramLengths = ImmutableList.copyOf(gramLengths);
+        this.gramLengths = Collections.unmodifiableList(gramLengths);
         this.filter = filter;
         this.textPadding = textPadding;
     }

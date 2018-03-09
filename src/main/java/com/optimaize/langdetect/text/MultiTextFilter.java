@@ -16,10 +16,10 @@
 
 package com.optimaize.langdetect.text;
 
-import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -39,7 +39,7 @@ public class MultiTextFilter implements TextFilter {
         if (filters.isEmpty()) {
             this.filters = null;
         } else {
-            this.filters = ImmutableList.copyOf(filters);
+            this.filters = Collections.unmodifiableList(filters);
         }
     }
 

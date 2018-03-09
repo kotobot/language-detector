@@ -16,12 +16,12 @@
 
 package com.optimaize.langdetect.profiles;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import com.optimaize.langdetect.i18n.LdLocale;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * <p>This class is immutable.</p>
@@ -63,9 +63,9 @@ public final class LanguageProfileImpl implements LanguageProfile {
         public Stats(@NotNull Map<Integer, Long> numOccurrences,
                      @NotNull Map<Integer, Long> minGramCounts,
                      @NotNull Map<Integer, Long> maxGramCounts) {
-            this.numOccurrences = ImmutableMap.copyOf(numOccurrences);
-            this.minGramCounts  = ImmutableMap.copyOf(minGramCounts);
-            this.maxGramCounts  = ImmutableMap.copyOf(maxGramCounts);
+            this.numOccurrences = Collections.unmodifiableMap(numOccurrences);
+            this.minGramCounts  = Collections.unmodifiableMap(minGramCounts);
+            this.maxGramCounts  = Collections.unmodifiableMap(maxGramCounts);
         }
     }
 
@@ -76,7 +76,7 @@ public final class LanguageProfileImpl implements LanguageProfile {
     LanguageProfileImpl(@NotNull LdLocale locale,
                         @NotNull Map<Integer, Map<String, Integer>> ngrams) {
         this.locale = locale;
-        this.ngrams = ImmutableMap.copyOf(ngrams);
+        this.ngrams = Collections.unmodifiableMap(ngrams);
         this.stats  = makeStats(ngrams);
     }
 
@@ -168,14 +168,11 @@ public final class LanguageProfileImpl implements LanguageProfile {
 
     @NotNull @Override
     public Iterable<Map.Entry<String,Integer>> iterateGrams() {
-        Iterable[] arr = new Iterable[ngrams.size()];
-        int i=0;
+        Stream<Map.Entry<String,Integer>> acc = Stream.empty();
         for (Map<String, Integer> stringIntegerMap : ngrams.values()) {
-            arr[i] = stringIntegerMap.entrySet();
-            i++;
+            acc = Stream.concat(acc, stringIntegerMap.entrySet().stream());
         }
-        //noinspection unchecked
-        return Iterables.concat(arr);
+        return acc.collect(Collectors.toSet());
     }
 
     @NotNull @Override
